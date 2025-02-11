@@ -3,11 +3,13 @@ import pytest
 import pandas as pd
 import config
 import re
+import random
 
 ENDPOINT = config.ENDPOINT
 NewPetPos = config.NEW_PET_POS_FILE
 NewPetNeg = config.NEW_PET_NEG_FILE
 
+random_id = random.randint(1000, 9999)
 
 
 def get_pet_data_from_excel_pos():
@@ -21,7 +23,7 @@ def get_pet_data_from_excel_neg():
 @pytest.fixture
 def update_user_data():
     return {
-  "id": 666,
+  "id": random_id,
   "username": "beccapana",
   "firstName": "Yan",
   "lastName": "Akulov",
@@ -41,8 +43,8 @@ def user_login():
 @pytest.fixture
 def create_user():
     return {
-  "id": 666,
-  "username": "beccapana",
+  "id": random_id,
+  "username": "beccapana", #hardcode
   "firstName": "Agei", #btw I rly changed my name 
   "lastName": "Kulesh",
   "email": "string",
@@ -133,6 +135,12 @@ def test_update_user_data(update_user_data, user_login):
 
     response = requests.put(f"{ENDPOINT}/user/beccapana", json=update_user_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    response = requests.get(f"{ENDPOINT}/user/beccapana")
+    assert response.status_code == 200, f"Unexpected status code on GET: {response.status_code}"
+    response = response.json()
+    for key, expected_value in update_user_data.items(): #we also can check so
+        assert response.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response.get(key)}"
 
 
 """delete"""
