@@ -1,1 +1,1 @@
-# made with luv special for yandex
+# made with luv special for yandex 💛
