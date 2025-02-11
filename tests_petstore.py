@@ -25,9 +25,9 @@ def update_user_data():
   "username": "beccapana",
   "firstName": "Yan",
   "lastName": "Akulov",
-  "email": "ian.sharkov@gmail.com",
+  "email": "ian.sharkov@gmail.com", #don't care
   "password": "qwerty666",
-  "phone": "+7977101",
+  "phone": "+7977101", #private data lol
   "userStatus": 0
 }
 
@@ -43,8 +43,8 @@ def create_user():
     return {
   "id": 666,
   "username": "beccapana",
-  "firstName": "Yan",
-  "lastName": "Akulov",
+  "firstName": "Agei", #btw I rly changed my name 
+  "lastName": "Kulesh",
   "email": "string",
   "password": "anime",
   "phone": "string",
