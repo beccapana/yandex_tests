@@ -2,4 +2,3 @@ pytest
 requests
 pandas
 openpyxl
-re
