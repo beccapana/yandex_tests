@@ -11,6 +11,7 @@ NewPetNeg = config.NEW_PET_NEG_FILE
 
 random_id = random.randint(1000, 9999)
 
+#Sorry for the hardcode a lot, I thought a function with pairwise testing would be enough
 
 def get_pet_data_from_excel_pos():
     df = pd.read_excel(NewPetPos, usecols=["id", "name"])  
