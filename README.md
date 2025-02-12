@@ -40,9 +40,3 @@ To run all tests, use:
 ```sh
 pytest tests_petstore.py
 ```
-
-To run tests with verbose output:
-```sh
-pytest -v tests_petstore.py
-```
-
