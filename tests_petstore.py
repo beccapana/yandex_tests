@@ -1,8 +1,6 @@
 import requests
 import pytest
-import pandas as pd
 from config import *
-import re
 
 """positive tests"""
 
@@ -38,7 +36,7 @@ def test_create_user(create_user):
 
 """put"""
 def test_update_user_data(update_user_data, user_login):
-    requests.get(f"{ENDPOINT}/user/login", params=user_login) 
+    requests.get(f"{ENDPOINT}/user/login", params=user_login) #required!
 
     response = requests.put(f"{ENDPOINT}/user/beccapana", json=update_user_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"

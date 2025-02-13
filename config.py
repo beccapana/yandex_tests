@@ -2,9 +2,10 @@ import pandas as pd
 import random 
 import pytest
 import requests
+import os
+
 ENDPOINT = "https://petstore.swagger.io/v2"
 
-import os
 current_dir = os.path.dirname(__file__)
 DATA_DIR = os.path.join(current_dir, "test_cases")
 
@@ -32,11 +33,11 @@ def update_user_data():
     return {
   "id": RANDOM_ID,
   "username": "beccapana",
-  "firstName": "Yan",
-  "lastName": "Akulov",
-  "email": "ian.sharkov@gmail.com", #don't care
-  "password": "qwerty666",
-  "phone": "+7977101", #private data lol
+  "firstName": "Me", #btw I really changed my name
+  "lastName": "Test",
+  "email": "test_email@test.com", 
+  "password": "testpass",
+  "phone": "+711234567890", 
   "userStatus": 0
 }
 
@@ -44,7 +45,7 @@ def update_user_data():
 def user_login():
     return {
   "username": "beccapana",
-  "password": "anime"
+  "password": "animetestt"
     }
 
 @pytest.fixture
@@ -52,10 +53,10 @@ def create_user():
     return {
   "id": RANDOM_ID,
   "username": "beccapana",
-  "firstName": "Agei", #btw I rly changed my name 
-  "lastName": "Kulesh",
+  "firstName": "test", 
+  "lastName": "test",
   "email": "string",
-  "password": "anime",
+  "password": "animetestt",
   "phone": "string",
   "userStatus": 0
     }
