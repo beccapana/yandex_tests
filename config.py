@@ -22,8 +22,10 @@ def get_pet_data_from_excel_pos():
  
 
 def get_pet_data_from_excel_neg():
-    df = pd.read_excel(NewPetNeg, usecols=["id", "name"]) 
-    return df.values.tolist() 
+    df = pd.read_excel(NewPetNeg, usecols=[
+        "id", "name", "category_id", "category_name", "tags_id", "tags_name", "status"
+    ])
+    return [tuple(row) for row in df.values]
 
 @pytest.fixture
 def update_user_data():

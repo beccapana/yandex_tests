@@ -72,7 +72,7 @@ def test_post_pet_busy(new_pet_busy):
 
 #testing pets from excel table | Negative
 
-@pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_pos())
+@pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_neg())
 def test_post_pet_from_excel_neg(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status):
     pet_data = new_pet(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status)  
     print(pet_data)

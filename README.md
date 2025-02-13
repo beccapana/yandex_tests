@@ -8,8 +8,8 @@ This project is a test automation suite for the Petstore API.
 
 1. Clone the repository:
    ```sh
-   git clone <repository_url>
-   cd <repository_name>
+   git clone github.com/beccapana/yandex_tests
+   cd yandex_tests
    ```
    or use GitHub Desktop like me:)
    
