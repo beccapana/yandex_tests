@@ -1,109 +1,8 @@
 import requests
 import pytest
 import pandas as pd
-import config
+from config import *
 import re
-import random
-
-ENDPOINT = config.ENDPOINT
-NewPetPos = config.NEW_PET_POS_FILE
-NewPetNeg = config.NEW_PET_NEG_FILE
-
-random_id = random.randint(1000, 9999)
-
-#Sorry for the hardcode a lot, I thought a function with pairwise testing would be enough
-
-def get_pet_data_from_excel_pos():
-    df = pd.read_excel(NewPetPos, usecols=["id", "name"])  
-    return df.values.tolist() 
-
-def get_pet_data_from_excel_neg():
-    df = pd.read_excel(NewPetNeg, usecols=["id", "name"]) 
-    return df.values.tolist() 
-
-@pytest.fixture
-def update_user_data():
-    return {
-  "id": random_id,
-  "username": "beccapana",
-  "firstName": "Yan",
-  "lastName": "Akulov",
-  "email": "ian.sharkov@gmail.com", #don't care
-  "password": "qwerty666",
-  "phone": "+7977101", #private data lol
-  "userStatus": 0
-}
-
-@pytest.fixture
-def user_login():
-    return {
-  "username": "beccapana",
-  "password": "anime"
-    }
-
-@pytest.fixture
-def create_user():
-    return {
-  "id": random_id,
-  "username": "beccapana", #hardcode
-  "firstName": "Agei", #btw I rly changed my name 
-  "lastName": "Kulesh",
-  "email": "string",
-  "password": "anime",
-  "phone": "string",
-  "userStatus": 0
-    }
-
-def new_pet(pet_id, name):
-    return {
-        "id": pet_id,
-        "category": {"id": 1, "name": "Dogs"},
-        "name": name,
-        "photoUrls": ["https://example.com/dog.jpg"],
-        "tags": [{"id": 1, "name": "cute"}],
-        "status": "available"
-    }
-
-@pytest.fixture
-def new_pet_free():
-    return {
-        "id": find_free_pet_id(),
-        "category": {"id": 1, "name": "Dogs"},
-        "name": "Buddy",
-        "photoUrls": ["https://example.com/dog.jpg"],
-        "tags": [{"id": 1, "name": "cute"}],
-        "status": "available"
-    }
-
-@pytest.fixture
-def new_pet_busy():
-    return {
-        "id": find_busy_pet_id(),
-        "category": {"id": 1, "name": "Dogs"},
-        "name": "Buddy",
-        "photoUrls": ["https://example.com/dog.jpg"],
-        "tags": [{"id": 1, "name": "cute"}],
-        "status": "available"
-    }
-
-
-#search for free pet
-def find_free_pet_id():
-    free_pet_id = 1
-    while True:
-        response = requests.get(f"{ENDPOINT}/pet/{free_pet_id}")
-        if response.status_code == 404:
-            return free_pet_id
-        free_pet_id += 1
-
-#search for busy pet
-def find_busy_pet_id():
-    busy_pet_id = 1
-    while True:
-        response = requests.get(f"{ENDPOINT}/pet/{busy_pet_id}")
-        if response.status_code == 200:
-            return busy_pet_id
-        busy_pet_id += 1
 
 """positive tests"""
 
@@ -117,14 +16,21 @@ def test_post_pet_free(new_pet_free):
     assert response_json["name"] == new_pet_free ["name"], "Pet name mismatch"
 
 #testing pets from excel table | Positive
-@pytest.mark.parametrize("pet_id, pet_name", get_pet_data_from_excel_pos())
-def test_post_pet_from_excel_pos(pet_id, pet_name):
-    pet_data = new_pet(pet_id, pet_name)  
+@pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_pos())
+def test_post_pet_from_excel_pos(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status):
+    pet_data = new_pet(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status)  
+    print(pet_data)
     response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
     response_json = response.json()
     assert response_json["name"] == pet_name, f"Expected {pet_name}, got {response_json['name']}"
     assert response_json["id"] == pet_id, f"Expected {pet_id}, got {response_json['id']}"
+    assert response_json["category"]["id"] == category_id, f"Expected {category_id}, got {response_json['category']['id']}"
+    assert response_json["category"]["name"] == category_name, f"Expected {category_name}, got {response_json['category']['name']}"
+    assert response_json["tags"][0]["id"] == tag_id, f"Expected {tag_id}, got {response_json['tags'][0]['id']}"
+    assert response_json["tags"][0]["name"] == tag_name, f"Expected {tag_name}, got {response_json['tags'][0]['name']}"
+    assert response_json["status"] == status, f"Expected {status}, got {response_json['status']}"
+
 
 def test_create_user(create_user):
     response = requests.post(f"{ENDPOINT}/user/", json=create_user)
@@ -165,13 +71,13 @@ def test_post_pet_busy(new_pet_busy):
     assert response.status_code != 200, f"Why 200. ID is busy." #Must be Failed
 
 #testing pets from excel table | Negative
-@pytest.mark.parametrize("pet_id, pet_name", get_pet_data_from_excel_neg())
-def test_post_pet_from_excel_neg(pet_id, pet_name):
-    pet_data = new_pet(pet_id, pet_name)  
-    response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
 
-    if re.search(r"[^a-zA-Z]", pet_name):  
-        assert response.status_code != 200, f"{response.status_code}. Why I can use spec symbools and numbers: {pet_name}"
+@pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_pos())
+def test_post_pet_from_excel_neg(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status):
+    pet_data = new_pet(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status)  
+    print(pet_data)
+    response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
+    assert response.status_code != 200, f"Why 200: ID {category_id} != {category_name} and/or ID {tag_id} != {tag_name}"
 
 """get pet/{id}"""
 #get with free ID
