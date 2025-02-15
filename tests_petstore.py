@@ -10,8 +10,8 @@ def test_post_pet_free(new_pet_free):
     response = requests.post(f"{ENDPOINT}/pet", json=new_pet_free)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
     response_json = response.json()
-    assert response_json["id"] == new_pet_free["id"], "Pet ID mismatch"
-    assert response_json["name"] == new_pet_free ["name"], "Pet name mismatch"
+    for key, expected_value in new_pet_free.items(): 
+        assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
 #testing pets from excel table | Positive
 @pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_pos())
@@ -45,6 +45,9 @@ def test_update_user_data(update_user_data, user_login):
 def test_get_user_data():
     response = requests.get(f"{ENDPOINT}/user/beccapana")
     assert response.status_code == 200, f"Unexpected status code on GET: {response.status_code}"
+    response_json = response.json()
+    for key, expected_value in update_user_data.items(): 
+        assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
     
 """delete"""
 #delete with busy ID
