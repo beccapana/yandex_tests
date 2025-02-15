@@ -17,7 +17,6 @@ def test_post_pet_free(new_pet_free):
 @pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_pos())
 def test_post_pet_from_excel_pos(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status):
     pet_data = new_pet(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status)  
-    print(pet_data)
     response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
     response_json = response.json()
@@ -27,24 +26,32 @@ def test_post_pet_from_excel_pos(pet_id, pet_name, category_id, category_name, t
 def test_create_user(create_user):
     response = requests.post(f"{ENDPOINT}/user/", json=create_user)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-    response_json = response.json()
+    
+    get_response = requests.get(f"{ENDPOINT}/user/{create_user['username']}") #required!
+    assert get_response.status_code == 200, f"Unexpected status code on GET: {get_response.status_code}"
+    response_json = get_response.json()
+    
     for key, expected_value in create_user.items(): 
         assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
 """put"""
 def test_update_user_data(update_user_data, user_login):
     requests.get(f"{ENDPOINT}/user/login", params=user_login) #required!
-
+    
     response = requests.put(f"{ENDPOINT}/user/beccapana", json=update_user_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-    response_json = response.json()
+    
+    get_response = requests.get(f"{ENDPOINT}/user/beccapana") #required!
+    assert get_response.status_code == 200, f"Unexpected status code on GET: {get_response.status_code}"
+    response_json = get_response.json()
+    
     for key, expected_value in update_user_data.items(): 
         assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
 '''get'''
-def test_get_user_data():
+def test_get_user_data(update_user_data):
     response = requests.get(f"{ENDPOINT}/user/beccapana")
-    assert response.status_code == 200, f"Unexpected status code on GET: {response.status_code}"
+    assert response.status_code == 200, f"Unexpected status code {response.status_code}"
     response_json = response.json()
     for key, expected_value in update_user_data.items(): 
         assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
@@ -59,8 +66,6 @@ def test_delete_user():
         response = requests.delete(f"{ENDPOINT}/user/beccapana")
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
-
-
 """negative tests"""
 
 """post"""
@@ -74,7 +79,6 @@ def test_post_pet_busy(new_pet_busy):
 @pytest.mark.parametrize("pet_id, pet_name, category_id, category_name, tag_id, tag_name, status", get_pet_data_from_excel_neg())
 def test_post_pet_from_excel_neg(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status):
     pet_data = new_pet(pet_id, pet_name, category_id, category_name, tag_id, tag_name, status)  
-    print(pet_data)
     response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
     assert response.status_code != 200, f"Why 200: ID {category_id} != {category_name} and/or ID {tag_id} != {tag_name}"
 
