@@ -1,5 +1,7 @@
 # made with luv special for yandex 💛
 
+Sorry for the large number of commits, I was writing auto tests for the first time. Since I was learning new material, It somehow didn't occur to me that expecting more prefessional code.
+
 # Project Setup
 
 This project is a test automation suite for the Petstore API.

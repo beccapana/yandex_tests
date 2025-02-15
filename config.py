@@ -11,6 +11,7 @@ DATA_DIR = os.path.join(current_dir, "test_cases")
 
 NewPetPos = os.path.join(DATA_DIR, "NewPetPos.xlsx") #https://pairwise.teremokgames.com/5jw54/
 NewPetNeg = os.path.join(DATA_DIR, "NewPetNeg.xlsx") #https://pairwise.teremokgames.com/5jw7w/
+userData = os.path.join(DATA_DIR, "userData.xlsx") #https://pairwise.teremokgames.com/5k2jo/
 
 RANDOM_ID = random.randint(1000, 9999)
 
@@ -28,11 +29,17 @@ def get_pet_data_from_excel_neg():
     ])
     return [tuple(row) for row in df.values]
 
+def get_user_data_from_excel():
+    df = pd.read_excel(userData, usecols=[
+        "id", "username", "firstName", "lastName", "email", "password", "phone", "userStatus"
+    ])
+    return [tuple(row) for row in df.values]
+
 @pytest.fixture
-def update_user_data():
+def update_user_data(username, user_id):
     return {
-  "id": RANDOM_ID,
-  "username": "beccapana",
+  "id": user_id,
+  "username": username,
   "firstName": "Me", #btw I really changed my name
   "lastName": "Test",
   "email": "test_email@test.com", 
@@ -40,25 +47,24 @@ def update_user_data():
   "phone": "+711234567890", 
   "userStatus": 0
 }
-
-@pytest.fixture
-def user_login():
+'''
+def user_login(username, password):
     return {
-  "username": "beccapana",
-  "password": "animetestt"
+  "username": username,
+  "password": password
     }
+    '''
 
-@pytest.fixture
-def create_user():
+def create_user(user_id, username, firstName, lastName, email, password, phone, userStatus):
     return {
-  "id": RANDOM_ID,
-  "username": "beccapana",
-  "firstName": "test", 
-  "lastName": "test",
-  "email": "string",
-  "password": "animetestt",
-  "phone": "string",
-  "userStatus": 0
+    "id": user_id,
+    "username": username,
+    "firstName": firstName,
+    "lastName": lastName,
+    "email": email,
+    "password": password,
+    "phone": phone,
+    "userStatus": userStatus
     }
 
 def new_pet(pet_id, name, category_id, category_name, tag_id, tag_name, status):
