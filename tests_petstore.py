@@ -21,18 +21,15 @@ def test_post_pet_from_excel_pos(pet_id, pet_name, category_id, category_name, t
     response = requests.post(f"{ENDPOINT}/pet", json=pet_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
     response_json = response.json()
-    assert response_json["name"] == pet_name, f"Expected {pet_name}, got {response_json['name']}"
-    assert response_json["id"] == pet_id, f"Expected {pet_id}, got {response_json['id']}"
-    assert response_json["category"]["id"] == category_id, f"Expected {category_id}, got {response_json['category']['id']}"
-    assert response_json["category"]["name"] == category_name, f"Expected {category_name}, got {response_json['category']['name']}"
-    assert response_json["tags"][0]["id"] == tag_id, f"Expected {tag_id}, got {response_json['tags'][0]['id']}"
-    assert response_json["tags"][0]["name"] == tag_name, f"Expected {tag_name}, got {response_json['tags'][0]['name']}"
-    assert response_json["status"] == status, f"Expected {status}, got {response_json['status']}"
-
+    for key, expected_value in pet_data.items(): 
+        assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
 def test_create_user(create_user):
     response = requests.post(f"{ENDPOINT}/user/", json=create_user)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    response_json = response.json()
+    for key, expected_value in create_user.items(): 
+        assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
 """put"""
 def test_update_user_data(update_user_data, user_login):
@@ -40,14 +37,15 @@ def test_update_user_data(update_user_data, user_login):
 
     response = requests.put(f"{ENDPOINT}/user/beccapana", json=update_user_data)
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    response_json = response.json()
+    for key, expected_value in update_user_data.items(): 
+        assert response_json.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response_json.get(key)}"
 
+'''get'''
+def test_get_user_data():
     response = requests.get(f"{ENDPOINT}/user/beccapana")
     assert response.status_code == 200, f"Unexpected status code on GET: {response.status_code}"
-    response = response.json()
-    for key, expected_value in update_user_data.items(): #we also can check so
-        assert response.get(key) == expected_value, f"Mismatch on {key}: expected {expected_value}, got {response.get(key)}"
-
-
+    
 """delete"""
 #delete with busy ID
 def test_delete_busy_pet_pos():
